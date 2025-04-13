@@ -43,17 +43,42 @@
       margin-bottom: 20px;
       border-radius: 8px;
     }
+ .video-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 20px;
+      margin-right: 10px;
+    }
     video {
       width: 800px;
-      margin-right: 10px;
-      margin-bottom: 20px;
       border-radius: 8px;
+      display: block;
+    }
+    .spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid #ffcc00;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      z-index: 2;
+    }
+    .hidden {
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
-  <h1>Вариант 1</h1>
+  <h1>Вариант 1: VFX</h1>
   <h4>Особенности:</h4>
   <ul>
     <li class="positive">VFX</li>
@@ -63,7 +88,7 @@
   <img src="1.gif" alt="GIF" />
   <img src="2.gif" alt="GIF" />
 
-  <h1>Вариант 2</h1>
+  <h1>Вариант 2: Snippet</h1>
   <h4>Особенности:</h4>
   <ul>
     <li class="positive">Простая реализация</li>
@@ -73,18 +98,24 @@
   </ul>
   <img src="3.gif" alt="GIF" />
 
-  <h1>Вариант 3</h1>
+  <h1>Вариант 3: Expression</h1>
   <h4>Особенности:</h4>
   <ul>
     <li class="positive">Анимация на экспрешенах</li>
     <li class="negative">Ограничения для веба</li>
   </ul>
-  <video autoplay muted loop playsinline>
-    <source src="4.mp4" type="video/mp4">
-  </video>
+  <div class="video-wrapper">
+    <div class="spinner"></div>
+    <video autoplay muted loop playsinline preload="auto" oncanplay="this.previousElementSibling.classList.add('hidden')">
+      <source src="4.mp4" type="video/mp4">
+    </video>
+  </div>
   
 
-  <h1>Вариант 4</h1>
+  <h1>Вариант 4: Spine 2D</h1>
+    <a href="https://esotericsoftware.com/" target="_blank" style="color: #00ccff; text-decoration: underline; font-size: 14px;">
+    https://esotericsoftware.com/
+  </a>
   <h4>Особенности:</h4>
   <ul>
     <li class="positive">Много рантаймов</li>
@@ -92,9 +123,13 @@
     <li class="negative">Лицензия</li>
     <li class="negative">Обучение</li>
   </ul>
-  <video autoplay muted loop playsinline>
-    <source src="5.mp4" type="video/mp4">
-  </video>
+  <div class="video-wrapper">
+    <div class="spinner"></div>
+    <video autoplay muted loop playsinline preload="auto" oncanplay="this.previousElementSibling.classList.add('hidden')">
+      <source src="5.mp4" type="video/mp4">
+    </video>
+  </div>
+
 
 </body>
 </html>
