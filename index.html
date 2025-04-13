@@ -74,6 +74,23 @@
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
+    @media (max-width: 768px) {
+      .video-wrapper {
+        width: 100%;
+        margin: 0 auto;
+      }
+      video {
+        width: 100%;
+        max-width: none; /* Убираем ограничение по максимальной ширине */
+        height: auto;
+      }
+      img {
+        width: 100%;
+        max-width: 755px; /* Ограничение ширины для изображения */
+        display: block;
+        margin: 10px auto;
+      }
+    }
   </style>
 </head>
 <body>
