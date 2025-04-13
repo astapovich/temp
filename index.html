@@ -43,6 +43,14 @@
       margin-bottom: 20px;
       border-radius: 8px;
     }
+  .responsive-img {
+      width: 100%;
+      max-width: 755px;
+      display: block;
+      margin: 10px auto;
+      border-radius: 10px;
+}
+
  .video-wrapper {
       position: relative;
       display: inline-block;
@@ -70,6 +78,7 @@
     .hidden {
       display: none;
     }
+    
     @keyframes spin {
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
@@ -128,7 +137,7 @@
       <source src="4.mp4" type="video/mp4">
     </video>
   </div>
-   <img src="img1.png" alt="Дополнительное изображение" style="width: 755px; border-radius: 10px; margin-top: 10px;"/>
+  <img src="img1.png" alt="Дополнительное изображение" class="responsive-img">
   
 
   <h1>Вариант 4: Spine 2D</h1>
