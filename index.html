@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Варианты</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    h4 {
+      margin-top: 10px;
+      color: #cccccc;
+      font-weight: 400;
+    }
+    ul {
+      margin-bottom: 15px;
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 5px 0;
+    }
+    .positive::before {
+      content: '✅ ';
+      color: #00ff00;
+    }
+    .negative::before {
+      content: '❌ ';
+      color: #ff4444;
+    }
+    img {
+      width: 300px;
+      margin-right: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Вариант 1</h1>
+  <h4>Особенности:</h4>
+  <ul>
+    <li class="positive">VFX</li>
+    <li class="negative">Сложная реализация</li>
+    <li class="negative">Спрайтовая анимация (большой вес)</li>
+  </ul>
+  <img src="1.gif" alt="GIF" />
+  <img src="2.gif" alt="GIF" />
+
+  <h1>Вариант 2</h1>
+  <h4>Особенности:</h4>
+  <ul>
+    <li class="positive">Простая реализация</li>
+    <li class="positive">Готовые сниппеты</li>
+    <li class="negative">Ограниченная анимация</li>
+    <li class="negative">Отсутсвие VFX</li>
+  </ul>
+  <img src="3.gif" alt="GIF" />
+
+  <h1>Вариант 3</h1>
+  <h4>Особенности:</h4>
+  <ul>
+    <li class="positive">Анимация на экспрешенах</li>
+    <li class="negative">Ограничения для веба</li>
+  </ul>
+  <img src="4.mp4" alt="VIDEO" />
+
+  <h1>Вариант 4</h1>
+  <h4>Особенности:</h4>
+  <ul>
+    <li class="positive">Много рантаймов</li>
+    <li class="positive">2D VFX</li>
+    <li class="negative">Лицензия</li>
+    <li class="negative">Обучение</li>
+  </ul>
+  <img src="5.mp4" alt="VIDEO" />
+
+</body>
+</html>
