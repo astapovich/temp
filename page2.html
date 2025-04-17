@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Видео и Анимации</title>
+
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Poppins', sans-serif;
+      background-color: #000;
+      color: #fff;
+    }
+
+    h1, p {
+      text-align: center;
+    }
+
+    .button-link {
+      display: inline-block;
+      background-color: #fff;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 40px;
+      transition: background-color 0.3s ease;
+    }
+
+    .button-link:hover {
+      background-color: #ddd;
+    }
+
+    .link {
+      text-align: center;
+    }
+
+    .block {
+      margin-bottom: 60px;
+    }
+
+    .block h2 {
+      text-align: center;
+      color: #00ffff;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    video, canvas, img {
+      width: 100%;
+      aspect-ratio: 2 / 1;
+      background-color: #111;
+      border-radius: 8px;
+    }
+
+    .description {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 16px;
+      color: #ffffff;
+    }
+
+    .icon {
+      color: #ff5050;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    @media (min-width: 900px) {
+      .container {
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Сравнение эффектов</h1>
+  <p>Примеры с видео и js анимациями</p>
+
+
+
+  <!-- SCALE -->
+  <div class="block" id="scaleBlock">
+    <h2>Scale</h2>
+    <div class="container">
+      <div class="item">
+        <video src="video.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <p class="description">Анимация на AE Expression</p>
+      </div>
+      <div class="item">
+        <canvas id="canvas-scale" width="800" height="400"></canvas>
+        <p class="description">Canvas-анимация эффекта Scale</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPACITY -->
+  <div class="block" id="opacityBlock">
+    <h2>Opacity</h2>
+    <div class="container">
+      <div class="item">
+        <video src="video.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <p class="description">Анимация на AE Expression</p>
+      </div>
+      <div class="item">
+        <canvas id="canvas-opacity" width="800" height="400"></canvas>
+        <p class="description">Canvas-анимация эффекта Opacity</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STROKE -->
+  <div class="block" id="strokeBlock">
+    <h2>Stroke</h2>
+    <div class="container">
+      <div class="item">
+        <video src="video.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <p class="description">Анимация на AE Expression</p>
+      </div>
+      <div class="item">
+        <canvas id="canvas-stroke" width="800" height="400"></canvas>
+        <p class="description">Canvas-анимация бегущей строки</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOW -->
+  <div class="block" id="glowBlock">
+    <h2>Glow</h2>
+    <div class="container">
+      <div class="item">
+        <video src="video.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <p class="description">Анимация на AE Expression</p>
+      </div>
+      <div class="item">
+        <img src="glow-image.jpg" alt="Glow effect" />
+        <p class="description"><span class="icon">!</span>В чистом JS эффекта glow нет. Есть аналог: создание эффекта через размытие и анимацию нескольких слоев</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Анимации -->
+  <script>
+    // SCALE
+    const ctxScale = document.getElementById("canvas-scale").getContext("2d");
+    let scale = 10, grow = true;
+    function drawScale() {
+      ctxScale.clearRect(0, 0, 800, 400);
+      ctxScale.beginPath();
+      ctxScale.arc(400, 200, scale, 0, Math.PI * 2);
+      ctxScale.fillStyle = "#00ffff";
+      ctxScale.fill();
+      scale += grow ? 1 : -1;
+      if (scale > 100 || scale < 10) grow = !grow;
+      requestAnimationFrame(drawScale);
+    }
+    drawScale();
+
+    // OPACITY
+    const ctxOpacity = document.getElementById("canvas-opacity").getContext("2d");
+    let opacity = 1, fading = true;
+    function drawOpacity() {
+      ctxOpacity.clearRect(0, 0, 800, 400);
+      ctxOpacity.globalAlpha = opacity;
+      ctxOpacity.beginPath();
+      ctxOpacity.arc(400, 200, 60, 0, Math.PI * 2);
+      ctxOpacity.fillStyle = "#ff00ff";
+      ctxOpacity.fill();
+      ctxOpacity.globalAlpha = 1;
+      opacity += fading ? -0.02 : 0.02;
+      if (opacity <= 0.1 || opacity >= 1) fading = !fading;
+      requestAnimationFrame(drawOpacity);
+    }
+    drawOpacity();
+
+    // STROKE
+    const ctxStroke = document.getElementById("canvas-stroke").getContext("2d");
+    let strokeRadius = 40, strokeGrow = true;
+    function drawStroke() {
+      ctxStroke.clearRect(0, 0, 800, 400);
+      ctxStroke.beginPath();
+      ctxStroke.arc(400, 200, strokeRadius, 0, Math.PI * 2);
+      ctxStroke.strokeStyle = "#ffaa00";
+      ctxStroke.lineWidth = 8;
+      ctxStroke.stroke();
+      strokeRadius += strokeGrow ? 1 : -1;
+      if (strokeRadius > 100 || strokeRadius < 40) strokeGrow = !strokeGrow;
+      requestAnimationFrame(drawStroke);
+    }
+    drawStroke();
+  </script>
+
+</body>
+</html>
