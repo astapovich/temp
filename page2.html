@@ -213,29 +213,24 @@
   </div>
 
   <!-- JS-анимации -->
-  <script>
-    // SCALE
-    const ctxScale = document.getElementById("canvas-scale").getContext("2d");
-    const options = {
+<script>
+  // ---------- SCALE ----------
+  const canvasScale = document.getElementById("canvas-scale");
+  const ctxScale = canvasScale.getContext("2d");
+
+  const scaleOptions = {
     startScale: 40,
     endScale: 100,
     pulseAmp: 25,
     pulseFreq: 1,
     decay: 2.5,
-    duration: 3 // Длительность одного цикла в секундах
+    duration: 3,
   };
 
-  let startTime = performance.now(); // Время старта цикла
+  let startTimeScale = performance.now();
 
-  function getScale(time, inPoint = 0, {
-    startScale,
-    endScale,
-    pulseAmp,
-    pulseFreq,
-    decay,
-    duration
-  }) {
-    const t = (time - inPoint) % duration; // Обнуляем каждые duration секунд
+  function getScale(time, inPoint = 0, opts) {
+    const t = (time - inPoint) % opts.duration;
 
     function easeOut(t, b, c, d) {
       t /= d;
@@ -243,92 +238,171 @@
     }
 
     if (t < 0.3) {
-      const eased = easeOut(t, startScale, endScale - startScale, 0.3);
+      const eased = easeOut(t, opts.startScale, opts.endScale - opts.startScale, 0.3);
       return [eased, eased];
-    } else if (t < duration - 0.3) {
-      const pulse = pulseAmp * Math.sin(pulseFreq * 2 * Math.PI * (t - 0.3)) / Math.exp(decay * (t - 0.3));
-      const scale = endScale + pulse;
+    } else if (t < opts.duration - 0.3) {
+      const pulse = opts.pulseAmp * Math.sin(opts.pulseFreq * 2 * Math.PI * (t - 0.3)) / Math.exp(opts.decay * (t - 0.3));
+      const scale = opts.endScale + pulse;
       return [scale, scale];
     } else {
-      // Плавный переход к стартовому значению перед рестартом
-      const resetT = (t - (duration - 0.3)) / 0.3;
-      const resetScale = endScale - (endScale - startScale) * resetT;
+      const resetT = (t - (opts.duration - 0.3)) / 0.3;
+      const resetScale = opts.endScale - (opts.endScale - opts.startScale) * resetT;
       return [resetScale, resetScale];
     }
   }
 
-  function draw() {
-    const now = (performance.now() - startTime) / 1000; // Время в секундах
-    const [scaleX, scaleY] = getScale(now, 0, options);
+  function drawScale() {
+    const now = (performance.now() - startTimeScale) / 1000;
+    const [scaleX, scaleY] = getScale(now, 0, scaleOptions);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctxScale.clearRect(0, 0, canvasScale.width, canvasScale.height);
+    ctxScale.save();
+    ctxScale.translate(canvasScale.width / 2, canvasScale.height / 2);
+    ctxScale.scale(scaleX / 100, scaleY / 100);
 
-    ctx.save();
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.scale(scaleX / 100, scaleY / 100);
+    ctxScale.beginPath();
+    ctxScale.arc(0, 0, 50, 0, 2 * Math.PI);
+    ctxScale.fillStyle = "cornflowerblue";
+    ctxScale.fill();
+    ctxScale.restore();
 
-    ctx.beginPath();
-    ctx.arc(0, 0, 50, 0, 2 * Math.PI);
-    ctx.fillStyle = "cornflowerblue";
-    ctx.fill();
-
-    ctx.restore();
-
-    requestAnimationFrame(draw);
+    requestAnimationFrame(drawScale);
   }
 
-  draw();
+  drawScale();
 
-    // OPACITY
-    const ctxOpacity = document.getElementById("canvas-opacity").getContext("2d");
-    // SVG-контент (можешь вставить свой SVG внутрь тега <svg>)
-    const svg = `
+  // ---------- OPACITY ----------
+  const canvasOpacity = document.getElementById("canvas-opacity");
+  const ctxOpacity = canvasOpacity.getContext("2d");
+
+  const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="194" height="170" viewBox="0 0 194 170">
       <circle cx="97" cy="85" r="60" fill="#FF3530"/>
     </svg>
-    `;
-    
-    // Загружаем SVG как картинку
-    const img = new Image();
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-    
-    let t = 0;
-    
-    img.onload = () => {
-      animate();
-    };
-    
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-      // Пульсация свечения (величина blur)
-      const pulse = 10 + Math.sin(t) * 20; // blur от 10 до 30
-    
-      ctx.shadowBlur = pulse;
-      ctx.shadowColor = '#FF3530';  // ярко-красное свечение
-    
-      ctx.drawImage(img, 100, 100, 194, 170); // позиция и размер
-    
-      t += 0.05;
-      requestAnimationFrame(animate);
+  `;
+
+  const img = new Image();
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+
+  let tOpacity = 0;
+
+  img.onload = () => {
+    animateOpacity();
+  };
+
+  function animateOpacity() {
+    ctxOpacity.clearRect(0, 0, canvasOpacity.width, canvasOpacity.height);
+
+    const pulse = 10 + Math.sin(tOpacity) * 20;
+
+    ctxOpacity.shadowBlur = pulse;
+    ctxOpacity.shadowColor = '#FF3530';
+
+    ctxOpacity.drawImage(img, 100, 100, 194, 170);
+
+    tOpacity += 0.05;
+    requestAnimationFrame(animateOpacity);
+  }
+
+  // ---------- STROKE ----------
+  const canvasStroke = document.getElementById("canvas-stroke");
+  const ctxStroke = canvasStroke.getContext("2d");
+
+  const glowCanvas = document.createElement('canvas');
+  glowCanvas.width = canvasStroke.width;
+  glowCanvas.height = canvasStroke.height;
+  const glowCtx = glowCanvas.getContext('2d');
+
+  const strokeColor = '#EEE3AD';
+  const glowColor = '#FFFCEB';
+  const speed = 30;
+  const segmentLength = 10;
+
+  const rect = { x: 100, y: 100, width: 400, height: 200 };
+
+  function hexToRgba(hex, alpha = 1) {
+    const r = parseInt(hex.substr(1, 2), 16);
+    const g = parseInt(hex.substr(3, 2), 16);
+    const b = parseInt(hex.substr(5, 2), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  function getRectLength() {
+    return 2 * (rect.width + rect.height);
+  }
+
+  function getPointAtPercent(p) {
+    const length = getRectLength();
+    let dist = (p % 100) / 100 * length;
+
+    if (dist <= rect.width) return [rect.x + dist, rect.y];
+    else if (dist <= rect.width + rect.height) return [rect.x + rect.width, rect.y + (dist - rect.width)];
+    else if (dist <= 2 * rect.width + rect.height) return [rect.x + rect.width - (dist - rect.width - rect.height), rect.y + rect.height];
+    else return [rect.x, rect.y + rect.height - (dist - 2 * rect.width - rect.height)];
+  }
+
+  function drawSegment(ctxTarget, startP, endP, opacity, width, strokeStyle = 'white') {
+    ctxTarget.save();
+    ctxTarget.lineWidth = width;
+    ctxTarget.strokeStyle = hexToRgba(strokeStyle, opacity);
+    ctxTarget.beginPath();
+
+    const steps = 100;
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const p = startP + (endP - startP) * t;
+      const [x, y] = getPointAtPercent(p);
+      if (i === 0) ctxTarget.moveTo(x, y);
+      else ctxTarget.lineTo(x, y);
     }
 
-    // STROKE
-    const ctxStroke = document.getElementById("canvas-stroke").getContext("2d");
-    let strokeRadius = 40, strokeGrow = true;
-    function drawStroke() {
-      ctxStroke.clearRect(0, 0, 800, 400);
-      ctxStroke.beginPath();
-      ctxStroke.arc(400, 200, strokeRadius, 0, Math.PI * 2);
-      ctxStroke.strokeStyle = "#ffaa00";
-      ctxStroke.lineWidth = 8;
-      ctxStroke.stroke();
-      strokeRadius += strokeGrow ? 1 : -1;
-      if (strokeRadius > 100 || strokeRadius < 40) strokeGrow = !strokeGrow;
-      requestAnimationFrame(drawStroke);
-    }
-    drawStroke();
-  </script>
+    ctxTarget.stroke();
+    ctxTarget.restore();
+  }
+
+  function lerp(x, x0, x1, y0, y1) {
+    return y0 + ((x - x0) / (x1 - x0)) * (y1 - y0);
+  }
+
+  function getParams(endVal) {
+    return {
+      width: endVal < 60 ? 1 : lerp(endVal, 60, 100, 1, 0),
+      glow: endVal < 80 ? 1 : lerp(endVal, 80, 100, 1, 0.2),
+      opacity: endVal < 60 ? 1 : lerp(endVal, 60, 100, 1, 0),
+    };
+  }
+
+  function animateStroke(time) {
+    const offset = (time / 1000 * speed) % 100;
+    const start = offset;
+    const end = (offset + segmentLength) % 100;
+
+    const params = getParams(end);
+
+    ctxStroke.fillStyle = 'black';
+    ctxStroke.fillRect(0, 0, canvasStroke.width, canvasStroke.height);
+
+    glowCtx.clearRect(0, 0, glowCanvas.width, glowCanvas.height);
+
+    glowCtx.lineCap = 'round';
+    drawSegment(glowCtx, start, end > start ? end : 100, 1, params.width * 15, glowColor);
+    if (end < start) drawSegment(glowCtx, 0, end, 1, params.width * 15, glowColor);
+
+    ctxStroke.save();
+    ctxStroke.filter = 'blur(10px)';
+    ctxStroke.globalAlpha = 0.7 * params.glow;
+    ctxStroke.drawImage(glowCanvas, 0, 0);
+    ctxStroke.restore();
+
+    drawSegment(ctxStroke, start, end > start ? end : 100, params.opacity, params.width * 3, strokeColor);
+    if (end < start) drawSegment(ctxStroke, 0, end, params.opacity, params.width * 3, strokeColor);
+
+    requestAnimationFrame(animateStroke);
+  }
+
+  requestAnimationFrame(animateStroke);
+</script>
+
 
 </body>
 </html>
