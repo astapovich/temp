@@ -207,7 +207,7 @@
       </div>
       <div class="item">
         <img src="glow-image.jpg" alt="Glow effect" />
-        <p class="description"><span class="icon">!</span>В чистом JS эффекта glow нет. Есть аналог: создание эффекта через размытие и анимацию нескольких слоев</p>
+        <p class="description"><span class="icon">!</span>В чистом JS эффекта glow нет. Аналог: создание эффекта через размытие и анимацию нескольких слоев</p>
       </div>
     </div>
   </div>
@@ -216,35 +216,102 @@
   <script>
     // SCALE
     const ctxScale = document.getElementById("canvas-scale").getContext("2d");
-    let scale = 10, grow = true;
-    function drawScale() {
-      ctxScale.clearRect(0, 0, 800, 400);
-      ctxScale.beginPath();
-      ctxScale.arc(400, 200, scale, 0, Math.PI * 2);
-      ctxScale.fillStyle = "#00ffff";
-      ctxScale.fill();
-      scale += grow ? 1 : -1;
-      if (scale > 100 || scale < 10) grow = !grow;
-      requestAnimationFrame(drawScale);
+    const options = {
+    startScale: 40,
+    endScale: 100,
+    pulseAmp: 25,
+    pulseFreq: 1,
+    decay: 2.5,
+    duration: 3 // Длительность одного цикла в секундах
+  };
+
+  let startTime = performance.now(); // Время старта цикла
+
+  function getScale(time, inPoint = 0, {
+    startScale,
+    endScale,
+    pulseAmp,
+    pulseFreq,
+    decay,
+    duration
+  }) {
+    const t = (time - inPoint) % duration; // Обнуляем каждые duration секунд
+
+    function easeOut(t, b, c, d) {
+      t /= d;
+      return -c * t * (t - 2) + b;
     }
-    drawScale();
+
+    if (t < 0.3) {
+      const eased = easeOut(t, startScale, endScale - startScale, 0.3);
+      return [eased, eased];
+    } else if (t < duration - 0.3) {
+      const pulse = pulseAmp * Math.sin(pulseFreq * 2 * Math.PI * (t - 0.3)) / Math.exp(decay * (t - 0.3));
+      const scale = endScale + pulse;
+      return [scale, scale];
+    } else {
+      // Плавный переход к стартовому значению перед рестартом
+      const resetT = (t - (duration - 0.3)) / 0.3;
+      const resetScale = endScale - (endScale - startScale) * resetT;
+      return [resetScale, resetScale];
+    }
+  }
+
+  function draw() {
+    const now = (performance.now() - startTime) / 1000; // Время в секундах
+    const [scaleX, scaleY] = getScale(now, 0, options);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.scale(scaleX / 100, scaleY / 100);
+
+    ctx.beginPath();
+    ctx.arc(0, 0, 50, 0, 2 * Math.PI);
+    ctx.fillStyle = "cornflowerblue";
+    ctx.fill();
+
+    ctx.restore();
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
 
     // OPACITY
     const ctxOpacity = document.getElementById("canvas-opacity").getContext("2d");
-    let opacity = 1, fading = true;
-    function drawOpacity() {
-      ctxOpacity.clearRect(0, 0, 800, 400);
-      ctxOpacity.globalAlpha = opacity;
-      ctxOpacity.beginPath();
-      ctxOpacity.arc(400, 200, 60, 0, Math.PI * 2);
-      ctxOpacity.fillStyle = "#ff00ff";
-      ctxOpacity.fill();
-      ctxOpacity.globalAlpha = 1;
-      opacity += fading ? -0.02 : 0.02;
-      if (opacity <= 0.1 || opacity >= 1) fading = !fading;
-      requestAnimationFrame(drawOpacity);
+    // SVG-контент (можешь вставить свой SVG внутрь тега <svg>)
+    const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="194" height="170" viewBox="0 0 194 170">
+      <circle cx="97" cy="85" r="60" fill="#FF3530"/>
+    </svg>
+    `;
+    
+    // Загружаем SVG как картинку
+    const img = new Image();
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    
+    let t = 0;
+    
+    img.onload = () => {
+      animate();
+    };
+    
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+      // Пульсация свечения (величина blur)
+      const pulse = 10 + Math.sin(t) * 20; // blur от 10 до 30
+    
+      ctx.shadowBlur = pulse;
+      ctx.shadowColor = '#FF3530';  // ярко-красное свечение
+    
+      ctx.drawImage(img, 100, 100, 194, 170); // позиция и размер
+    
+      t += 0.05;
+      requestAnimationFrame(animate);
     }
-    drawOpacity();
 
     // STROKE
     const ctxStroke = document.getElementById("canvas-stroke").getContext("2d");
