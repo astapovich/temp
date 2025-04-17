@@ -295,7 +295,7 @@
 
     const pulse = 10 + Math.sin(tOpacity) * 20;
 
-    ctxOpacity.shadowBlur = pulse;
+    ctxOpacity.shadowBlur = pulse * 2;
     ctxOpacity.shadowColor = '#FF3530';
 
     // Центрирование с учётом увеличения
