@@ -258,11 +258,11 @@
     ctxScale.clearRect(0, 0, canvasScale.width, canvasScale.height);
     ctxScale.save();
     ctxScale.translate(canvasScale.width / 2, canvasScale.height / 2);
-    ctxScale.scale(scaleX / 100, scaleY / 100);
+    ctxScale.scale((scaleX / 100) * 1.4, (scaleY / 100) * 1.4); // Увеличение в 1.4 раза
 
     ctxScale.beginPath();
     ctxScale.arc(0, 0, 50, 0, 2 * Math.PI);
-    ctxScale.fillStyle = "FF3530";
+    ctxScale.fillStyle = "#FF3530"; // Новый цвет
     ctxScale.fill();
     ctxScale.restore();
 
@@ -298,7 +298,14 @@
     ctxOpacity.shadowBlur = pulse;
     ctxOpacity.shadowColor = '#FF3530';
 
-    ctxOpacity.drawImage(img, 100, 100, 194, 170);
+    // Центрирование с учётом увеличения
+    const scaleFactor = 1.2;
+    const drawWidth = 194 * scaleFactor;
+    const drawHeight = 170 * scaleFactor;
+    const posX = (canvasOpacity.width - drawWidth) / 2;
+    const posY = (canvasOpacity.height - drawHeight) / 2;
+
+    ctxOpacity.drawImage(img, posX, posY, drawWidth, drawHeight);
 
     tOpacity += 0.05;
     requestAnimationFrame(animateOpacity);
@@ -402,6 +409,7 @@
 
   requestAnimationFrame(animateStroke);
 </script>
+
 
 
 </body>
