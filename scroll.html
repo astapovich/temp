@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scroll reveal card</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #010214;
+      --text60: rgba(255,255,255,.6);
+      --white: #fff;
+    }
+
+    *{ box-sizing: border-box; }
+
+    body{
+      margin: 0;
+      font-family: "Rubik", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--white);
+    }
+
+    .wrap{
+      width: min(760px, 100%);
+      margin: 0 auto;
+      padding: 60px 16px 120px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .card{
+      width: 100%;
+      padding: 28px 20px 34px;
+      border-radius: 20px;
+      text-align: center;
+
+      background:
+        radial-gradient(900px 450px at 50% 0%, rgba(118, 92, 255, .12), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: 0 28px 70px rgba(0,0,0,.55);
+    }
+
+    /* пустые карточки-заглушки сверху */
+    .card--empty{
+      height: 220px;
+      padding: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+      border: 1px solid rgba(255,255,255,.05);
+      box-shadow: none;
+    }
+
+    .title{
+      font-weight: 500; /* Rubik Medium */
+      font-size: 32pt;
+      line-height: 1.15;
+      margin: 40px 0 24px;
+    }
+
+    .desc{
+      margin: 0 auto;
+      max-width: 560px;
+      font-weight: 400; /* Rubik Regular */
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--text60);
+    }
+
+    /* Сцена под картинки */
+    .stack{
+      position: relative;
+      width: min(520px, 100%);
+      height: 300px;
+      margin: 10px auto 6px;
+      display: grid;
+      place-items: center;
+    }
+
+    /* Наложение картинок */
+    .stack img{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: auto;
+      height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+
+      opacity: 0;
+      transform: translate(-50%,-50%) translateY(14px) scale(0.985);
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,.45));
+      pointer-events: none;
+      will-change: opacity, transform;
+    }
+
+    /* Запуск только когда доскроллили */
+    .card.is-visible .stack img{
+      animation-name: reveal;
+      animation-duration: 1100ms;         /* медленнее */
+      animation-timing-function: cubic-bezier(.2,.7,.2,1);
+      animation-fill-mode: forwards;
+    }
+
+    /* Увеличили задержки, чтобы не выглядело одновременным */
+    .card.is-visible .i1{ animation-delay: 0ms; }
+    .card.is-visible .i2{ animation-delay: 250ms; }
+    .card.is-visible .i3{ animation-delay: 500ms; }
+    .card.is-visible .i4{ animation-delay: 750ms; }
+
+    @keyframes reveal{
+      0%{
+        opacity: 0;
+        transform: translate(-50%,-50%) translateY(14px) scale(0.985);
+      }
+      100%{
+        opacity: 1;
+        transform: translate(-50%,-50%) translateY(0) scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <!-- Заглушки сверху, чтобы можно было доскроллить -->
+    <section class="card card--empty"></section>
+    <section class="card card--empty"></section>
+    <section class="card card--empty"></section>
+    <section class="card card--empty"></section>
+
+    <!-- Нужная карточка -->
+    <section class="card js-reveal">
+      <div class="stack" aria-hidden="true">
+        <img class="i1" src="img/1.png" alt="">
+        <img class="i2" src="img/2.png" alt="">
+        <img class="i3" src="img/3.png" alt="">
+        <img class="i4" src="img/4.png" alt="">
+      </div>
+
+      <h2 class="title">Рекомендации</h2>
+      <p class="desc">
+        На нашем бесплатном вводном курсе по UX/UI ты также получишь доступ к ценным
+        рекомендациям от опытных преподавателей. Эти рекомендации дадут тебе прекрасный
+        старт и будут полезными в твоем дальнейшем обучении и карьерном росте.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const cards = document.querySelectorAll('.js-reveal');
+
+    const io = new IntersectionObserver((entries, obs) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target); // проигрываем один раз
+        }
+      }
+    }, {
+      threshold: 0.35,
+      rootMargin: "0px 0px -10% 0px" // чуть позже, ближе к центру экрана
+    });
+
+    cards.forEach(card => io.observe(card));
+  </script>
+</body>
+</html>
